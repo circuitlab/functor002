@@ -177,7 +177,8 @@ function init() {
     scale: 10,
     x: 656,
     y: -1000,
-    z: 1000
+    z: 1000,
+    visible: true,
   };
 
   initBirds();
@@ -218,6 +219,8 @@ function init() {
           effectController.y,
           effectController.z );
 
+        shibuya.visible = effectController.visible;
+
       };
 
       valuesChanger();
@@ -229,6 +232,7 @@ function init() {
       gui.add( effectController, 'x', -2000, 2000, 1 ).onChange( valuesChanger );
       gui.add( effectController, 'y', -2000, 2000, 1 ).onChange( valuesChanger );
       gui.add( effectController, 'z', -2000, 2000, 1 ).onChange( valuesChanger );
+      gui.add( effectController, 'visible' ).onChange( valuesChanger );
       gui.close();
 
 
