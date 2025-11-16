@@ -228,6 +228,7 @@ function init() {
           effectController.y,
           effectController.z );
 
+        shibuya.visible = false;
         shibuya.visible = effectController.visible;
 
       };
