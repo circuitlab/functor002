@@ -187,7 +187,7 @@ function init() {
     x: 656,
     y: -1000,
     z: 1000,
-    visible: true,
+    visible: false,
   };
 
   initBirds();
@@ -228,7 +228,6 @@ function init() {
           effectController.y,
           effectController.z );
 
-        shibuya.visible = false;
         shibuya.visible = effectController.visible;
 
       };
