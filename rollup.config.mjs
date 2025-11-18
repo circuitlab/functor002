@@ -4,7 +4,8 @@ import glslify from 'rollup-plugin-glslify';
 export default {
   input: [
     'src/main.js',
-    'src/landscape.js'
+    'src/landscape.js',
+    'src/pa.js'
   ],
   output: {
     dir: 'public/assets/js/',
