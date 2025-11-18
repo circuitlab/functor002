@@ -108,60 +108,20 @@ function init() {
     }
   } );
 
-  const gltfloader = new GLTFLoader();
+  const valuesChanger = function () {
 
-  gltfloader.load(
-    'assets/shibuya.glb',
-    ( gltf ) => {
+    velocityUniforms['separationDistance'].value = effectController.separation;
+    velocityUniforms['alignmentDistance'].value = effectController.alignment;
+    velocityUniforms['cohesionDistance'].value = effectController.cohesion;
+    velocityUniforms['freedomFactor'].value = effectController.freedom;
+  };
 
-      shibuya = gltf.scene;
+  gui.add( effectController, 'separation', 0.0, 100.0, 1.0 ).onChange( valuesChanger );
+  gui.add( effectController, 'alignment', 0.0, 100, 0.001 ).onChange( valuesChanger );
+  gui.add( effectController, 'cohesion', 0.0, 100, 0.025 ).onChange( valuesChanger );
+  gui.add( effectController, 'freedom', 0.0, 100, 0.025 ).onChange( valuesChanger );
 
-      shibuya.rotation.y = 45;
-
-      scene.add( shibuya );
-
-      const valuesChanger = function () {
-
-        velocityUniforms['separationDistance'].value = effectController.separation;
-        velocityUniforms['alignmentDistance'].value = effectController.alignment;
-        velocityUniforms['cohesionDistance'].value = effectController.cohesion;
-        velocityUniforms['freedomFactor'].value = effectController.freedom;
-
-        shibuya.scale.set( effectController.scale, effectController.scale, effectController.scale );
-
-        shibuya.position.set(
-          effectController.x,
-          effectController.y,
-          effectController.z );
-
-        shibuya.visible = effectController.visible;
-
-      };
-
-      valuesChanger();
-
-      gui.add( effectController, 'separation', 0.0, 100.0, 1.0 ).onChange( valuesChanger );
-      gui.add( effectController, 'alignment', 0.0, 100, 0.001 ).onChange( valuesChanger );
-      gui.add( effectController, 'cohesion', 0.0, 100, 0.025 ).onChange( valuesChanger );
-      gui.add( effectController, 'scale', 0.001, 100, 0.001 ).onChange( valuesChanger );
-      gui.add( effectController, 'x', -2000, 2000, 1 ).onChange( valuesChanger );
-      gui.add( effectController, 'y', -2000, 2000, 1 ).onChange( valuesChanger );
-      gui.add( effectController, 'z', -2000, 2000, 1 ).onChange( valuesChanger );
-      gui.add( effectController, 'visible' ).onChange( valuesChanger );
-      gui.close();
-
-
-    } );
-
-
-
-  const directionalLight = new THREE.DirectionalLight( 0xffffff, 5 );
-
-  scene.add( directionalLight );
-
-  const light = new THREE.AmbientLight( 0xffffff );
-
-  scene.add( light );
+  valuesChanger();
 
   const getViewport = () => {
     return {
