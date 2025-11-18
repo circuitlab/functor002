@@ -13,10 +13,10 @@ AFRAME.registerComponent( "pigeon-functor", {
         to: 'others',
         type: 'ipad',
         body: {
-          w: quaternion.w,
-          x: quaternion.y,
+          x: quaternion.x,
           y: quaternion.y,
           z: quaternion.z,
+          w: quaternion.w,
         }
       } );
     }, 100 );
