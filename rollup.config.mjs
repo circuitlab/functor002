@@ -5,7 +5,8 @@ export default {
   input: [
     'src/main.js',
     'src/landscape.js',
-    'src/pa.js'
+    'src/pa.js',
+    'src/atmosphere.js',
   ],
   output: {
     dir: 'public/assets/js/',
