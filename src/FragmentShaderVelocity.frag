@@ -23,7 +23,7 @@ float alignmentThresh = 0.65;
 const float UPPER_BOUNDS = BOUNDS;
 const float LOWER_BOUNDS = -UPPER_BOUNDS;
 
-const float SPEED_LIMIT = 9.0;
+const float SPEED_LIMIT = 5.0;
 
 float rand( vec2 co ){
   return fract( sin( dot( co.xy, vec2(12.9898,78.233) ) ) * 43758.5453 );
@@ -81,7 +81,7 @@ void main() {
 
 
   // Attract flocks to the center
-  vec3 central = vec3( 0., 0., 0. );
+  vec3 central = vec3( 0., 70.0, 0. );
   dir = selfPosition - central;
   dist = length( dir );
 

@@ -51,7 +51,7 @@ function init() {
   document.body.appendChild( container );
 
   camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1000000 );
-  camera.position.z = 100;
+  camera.position.z = 150;
   camera.position.y = 50;
 
   scene = new THREE.Scene();
@@ -86,8 +86,8 @@ function init() {
 
   const effectController = {
     separation: 20.0,
-    alignment: 20.0,
-    cohesion: 20.0,
+    alignment: 10.0,
+    cohesion: 30.0,
     freedom: 0.75,
     scale: 10,
     x: 656,
@@ -180,6 +180,11 @@ function init() {
         height: Number( demoHeight )
       } );
     } );
+
+  setInterval( () => {
+    velocityUniforms['separationDistance'].value = 15 + ( Math.random() * 10 );
+    velocityUniforms['alignmentDistance'].value = 15 - ( Math.random() * 10 );
+  }, 10000 );
 }
 
 function initComputeRenderer() {
@@ -294,9 +299,9 @@ function fillPositionTexture( texture ) {
     const y = Math.random() * BOUNDS - BOUNDS_HALF;
     const z = Math.random() * BOUNDS - BOUNDS_HALF;
 
-    theArray[k + 0] = x;
-    theArray[k + 1] = y;
-    theArray[k + 2] = z;
+    theArray[k + 0] = 200 + x;
+    theArray[k + 1] = 40 + ( y / 10 );
+    theArray[k + 2] = 100 + z;
     theArray[k + 3] = 1;
 
   }
