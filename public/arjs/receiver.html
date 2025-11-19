@@ -20,9 +20,11 @@
   <a-scene xr-mode-ui="enabled: true">
 
     <a-assets>
+      <a-asset-item id="room" src="/assets/gltf/villamoderna.glb"></a-asset-item>
       <a-asset-item id="ipad" src="/assets/gltf/ipad.glb"></a-asset-item>
     </a-assets>
 
+    <a-entity gltf-model="#room" position="0, 1.2, 0" rotation="0, -60, 0"></a-entity>
     <a-entity gltf-model="#ipad" position="0, 1.5, -1" scale="0.1 0.1 0.1" pigeon-receiver></a-entity>
 
     <a-camera look-controls="enabled: true" fov="73"></a-camera>
