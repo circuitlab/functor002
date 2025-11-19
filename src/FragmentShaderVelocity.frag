@@ -15,7 +15,7 @@ const float PI_2 = PI * 2.0;
 // const float VISION = PI * 0.55;
 
 float zoneRadius = 40.0;
-float zoneRadiusSquared = 1600.0;
+float zoneRadiusSquared = 16000.0;
 
 float separationThresh = 0.45;
 float alignmentThresh = 0.65;
@@ -86,7 +86,7 @@ void main() {
   dist = length( dir );
 
   dir.y *= 2.5;
-  velocity -= normalize( dir ) * delta * 2.5;
+  velocity -= normalize( dir ) * delta * 1.5;
 
   for ( float y = 0.0; y < height; y++ ) {
     for ( float x = 0.0; x < width; x++ ) {

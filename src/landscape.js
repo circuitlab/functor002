@@ -86,9 +86,9 @@ function init() {
   const gui = new GUI();
 
   const effectController = {
-    separation: 20.0,
-    alignment: 10.0,
-    cohesion: 30.0,
+    separation: 10.0,
+    alignment: 20.0,
+    cohesion: 20.0,
     freedom: 0.75,
     scale: 10,
     x: 656,
@@ -185,9 +185,9 @@ function init() {
     } );
 
   setInterval( () => {
-    velocityUniforms['separationDistance'].value = 15 + ( Math.random() * 10 );
-    velocityUniforms['alignmentDistance'].value = 15 - ( Math.random() * 10 );
-  }, 10000 );
+    velocityUniforms['separationDistance'].value = 19 + ( Math.random() * 2 );
+    velocityUniforms['alignmentDistance'].value = 19 + ( Math.random() * 2 );
+  }, 30000 );
 }
 
 function initComputeRenderer() {
