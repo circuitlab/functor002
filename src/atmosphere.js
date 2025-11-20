@@ -41,6 +41,11 @@ import {
   LensFlareEffect
 } from '@takram/three-geospatial-effects';
 
+import { Loader3DTiles, PointCloudColoring } from 'three-loader-3dtiles';
+
+const queryParams = new URLSearchParams( document.location.search );
+let tilesRuntime;
+
 let renderer;
 let camera;
 let controls;
@@ -173,6 +178,45 @@ function init( container ) {
   window.addEventListener( 'resize', onWindowResize );
   renderer.setAnimationLoop( render );
 
+  const getViewport = () => {
+    return {
+      width: document.body.clientWidth,
+      height: document.body.clientHeight,
+      devicePixelRatio: window.devicePixelRatio
+    };
+  };
+
+  Loader3DTiles.load( {
+    url: "https://tile.googleapis.com/v1/3dtiles/root.json?key=" + queryParams.get( 'key' ),
+    viewport: getViewport(),
+    options: {
+      dracoDecoderPath: 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco',
+      basisTranscoderPath: 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/basis',
+      pointCloudColoring: PointCloudColoring.RGB,
+      maximumScreenSpaceError: queryParams.get( 'sse' ) ?? 48
+    }
+  } )
+    .then( ( result ) => {
+      const model = result.model;
+      const runtime = result.runtime;
+
+      console.log( "yaay loaded" );
+
+      const demoLat = queryParams.get( 'lat' ) ?? 35.6740679;
+      const demoLong = queryParams.get( 'long' ) ?? 139.7108025;
+      const demoHeight = queryParams.get( 'height' ) ?? 60;
+
+      tilesRuntime = runtime;
+
+      group.add( model );
+      group.add( runtime.getTileBoxes() );
+
+      runtime.orientToGeocoord( {
+        lat: Number( demoLat ),
+        long: Number( demoLong ),
+        height: Number( demoHeight )
+      } );
+    } );
 }
 
 function onWindowResize() {
@@ -196,6 +240,11 @@ function render() {
   skyLight.update();
   controls.update();
   composer.render();
+
+  if ( tilesRuntime ) {
+    const dt = clock.getDelta();
+    tilesRuntime.update( dt, camera );
+  }
 }
 
 const container = document.createElement( 'div' );
