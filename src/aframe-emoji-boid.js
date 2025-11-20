@@ -97,9 +97,9 @@ AFRAME.registerComponent( "emoji-boid", {
     this.velocityUniforms['delta'] = { value: 0.0 };
     this.velocityUniforms['testing'] = { value: 1.0 };
     this.velocityUniforms['separationDistance'] = { value: 0.1 };
-    this.velocityUniforms['alignmentDistance'] = { value: 0.1 };
-    this.velocityUniforms['cohesionDistance'] = { value: 0.1 };
-    this.velocityUniforms['freedomFactor'] = { value: 1.0 };
+    this.velocityUniforms['alignmentDistance'] = { value: 20.0 };
+    this.velocityUniforms['cohesionDistance'] = { value: 20.0 };
+    this.velocityUniforms['freedomFactor'] = { value: 0.75 };
     this.velocityUniforms['predator'] = { value: new THREE.Vector3() };
     this.velocityVariable.material.defines.BOUNDS = this.BOUNDS.toFixed( 2 );
 

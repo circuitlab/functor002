@@ -23,7 +23,7 @@ float alignmentThresh = 0.65;
 const float UPPER_BOUNDS = BOUNDS;
 const float LOWER_BOUNDS = -UPPER_BOUNDS;
 
-const float SPEED_LIMIT = 0.01;
+const float SPEED_LIMIT = 0.05;
 
 float rand( vec2 co ){
   return fract( sin( dot( co.xy, vec2(12.9898,78.233) ) ) * 43758.5453 );
@@ -85,8 +85,8 @@ void main() {
   dir = selfPosition - central;
   dist = length( dir );
 
-  dir.y *= 2.5;
-  velocity -= normalize( dir ) * delta * 5.;
+  dir.y *= 0.25;
+  velocity -= normalize( dir ) * delta * 0.1;
 
   for ( float y = 0.0; y < height; y++ ) {
     for ( float x = 0.0; x < width; x++ ) {
