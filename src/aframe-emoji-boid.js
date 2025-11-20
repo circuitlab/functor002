@@ -201,3 +201,18 @@ AFRAME.registerComponent( "emoji-boid", {
     }
   }
 } );
+
+AFRAME.registerComponent( 'look-at-target', {
+  schema: {
+    target: { type: 'selector' }
+  },
+  init() {
+    console.log( "hello" );
+  },
+  tick: function ( t, dt ) {
+    if ( this.data.target ) {
+      // this.el is the entity this component is on
+      this.el.object3D.lookAt( this.data.target.object3D.position );
+    }
+  }
+} );

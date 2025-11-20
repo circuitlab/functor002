@@ -25,11 +25,42 @@
     <a-assets>
       <a-asset-item id="room" src="/assets/gltf/pa.glb"></a-asset-item>
       <a-asset-item id="ipad" src="/assets/gltf/ipad.glb"></a-asset-item>
+      <img id="emoji1" src="/assets/images/emoji1.png" />
+      <img id="emoji2" src="/assets/images/emoji2.png" />
+      <img id="emoji3" src="/assets/images/emoji3.png" />
+      <img id="emoji4" src="/assets/images/emoji4.png" />
+      <img id="emoji5" src="/assets/images/emoji5.png" />
     </a-assets>
 
     <a-entity gltf-model="#room" position="0 1.4 -1" rotation="0 0 0"></a-entity>
     <a-entity gltf-model="#ipad" position="0 1.55 0" scale="0.1 0.1 0.1" pigeon-receiver></a-entity>
+
     <a-entity emoji-boid></a-entity>
+
+    <a-entity position="0 1.55 -0.4" animation="property:rotation; dur: 30000; fill: forwards; to: 0 360 0; loop: true; easing: linear;">
+      <a-plane src="#emoji1" height="0.3" width="0.3" position="0 0.2 -1.6" rotation="0 0 0" material="transparent: true; side: double; alphaTest: 0.1;"
+        animation="property:position; dur: 12000; fill: forwards; to: 0 -0.2 -1.6; loop: true; dir: alternate; easing: easeInOutSine;"></a-plane>
+    </a-entity>
+
+    <a-entity position="0 1.55 -0.5" animation="property:rotation; dur: 45000; fill: forwards; to: 0 360 0; loop: true; easing: linear;">
+      <a-plane src="#emoji2" height="0.4" width="0.4" position="0 0.3 0.8" rotation="0 0 0" material="transparent: true; side: double; alphaTest: 0.1;"
+        animation="property:position; dur: 11000; fill: forwards; to: 0 -0.1 0.8; loop: true; dir: alternate; easing: easeInOutSine;"></a-plane>
+    </a-entity>
+
+    <a-entity position="0 1.55 -0.2" animation="property:rotation; dur: 40000; fill: forwards; to: 0 360 0; loop: true; easing: linear;">
+      <a-plane src="#emoji3" height="0.3" width="0.3" position="0.8 0.4 1.2" rotation="0 0 0" material="transparent: true; side: double; alphaTest: 0.1;"
+        animation="property:position; dur: 10000; fill: forwards; to: 0.8 -0.2 1.2; loop: true; dir: alternate; easing: easeInOutSine;"></a-plane>
+    </a-entity>
+
+    <a-entity position="0 1.55 -0.3" animation="property:rotation; dur: 35000; fill: forwards; to: 0 360 0; loop: true; easing: linear;">
+      <a-plane src="#emoji4" height="0.4" width="0.4" position="-0.4 0.1 -0.7" rotation="0 0 0" material="transparent: true; side: double; alphaTest: 0.1;"
+        animation="property:position; dur: 14000; fill: forwards; to: -0.4 -0.2 -0.7; loop: true; dir: alternate; easing: easeInOutSine;"></a-plane>
+    </a-entity>
+
+    <a-entity position="0 1.55 -0.1" animation="property:rotation; dur: 25000; fill: forwards; to: 0 360 0; loop: true; easing: linear;">
+      <a-plane src="#emoji5" height="0.3" width="0.3" position="-0.1 0.7 -1" rotation="0 0 0" material="transparent: true; side: double; alphaTest: 0.1;"
+        animation="property:position; dur: 13000; fill: forwards; to: -0.1 0.1 -1; loop: true; dir: alternate; easing: easeInOutSine;"></a-plane>
+    </a-entity>
 
     <a-entity camera look-controls="enabled: false" orbit-controls="target: 0 1.55 0; minDistance: 0.3; maxDistance: 1.2; initialPosition: 1 2 -1; rotateSpeed: 0.5; enablePan: false;"></a-entity>
   </a-scene>
