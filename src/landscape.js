@@ -43,6 +43,8 @@ let birdUniforms;
 let tilesRuntime = null;
 const clock = new THREE.Clock();
 
+const copyrightElement = document.querySelector( "#credit" );
+
 init();
 
 function init() {
@@ -155,9 +157,10 @@ function init() {
   };
 
   Loader3DTiles.load( {
-    url: "https://tile.googleapis.com/v1/3dtiles/root.json?key=" + queryParams.get( 'key' ),
+    url: "https://tile.googleapis.com/v1/3dtiles/root.json",
     viewport: getViewport(),
     options: {
+      googleApiKey: queryParams.get( 'key' ),
       dracoDecoderPath: 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco',
       basisTranscoderPath: 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/basis',
       pointCloudColoring: PointCloudColoring.RGB,
@@ -392,6 +395,6 @@ function render() {
   if ( tilesRuntime ) {
     const dt = clock.getDelta();
     tilesRuntime.update( dt, camera );
+    copyrightElement.innerHTML = tilesRuntime.getDataAttributions();
   }
-
 }
