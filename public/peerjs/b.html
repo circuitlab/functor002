@@ -31,15 +31,14 @@ let id
 
 peer.on('open', (connectas) => {
   id = connectas
+
+  showMessage('open as ' + id)
 })
 
 peer.on( 'connection', (conn) => {
-  conn.on( 'open', function () {
-
-    showMessage('open as ' + id)
-
+  conn.on( 'open', () => {
     // Receive messages
-    conn.on( 'data', function ( data ) {
+    conn.on( 'data', ( data ) => {
       showMessage('Received data: ' + data);
     } );
 

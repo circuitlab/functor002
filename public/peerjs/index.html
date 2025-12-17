@@ -30,12 +30,11 @@ const peer = new Peer(
 peer.on( 'open', (id) => {
   const conn = peer.connect( 'functortestB' );
 
-  conn.on( 'open', function () {
+  showMessage('open as ' + id)
 
-    showMessage('open as ' + id)
-
+  conn.on( 'open', () => {
     // Receive messages
-    conn.on( 'data', function ( data ) {
+    conn.on( 'data', ( data ) => {
       showMessage('Received data: ' + data);
     } );
 
