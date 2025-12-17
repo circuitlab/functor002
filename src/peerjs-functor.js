@@ -1,14 +1,20 @@
 import { Peer } from "https://esm.sh/peerjs@1.5.5?bundle-deps";
 
-const peer = new Peer( 'functor001b' );
+const peer = new Peer(
+  'functor001b', {
+  config: {
+    'iceServers': [
+      { urls: 'stun:stun.l.google.com:19302' },
+    ]
+  }
+} );
 
 peer.on( 'open', () => {
-
   const conn = peer.connect( 'functor001broom' );
 
-  conn.on( 'open', function () {
+  conn.on( 'open', () => {
     // Receive messages
-    conn.on( 'data', function ( data ) {
+    conn.on( 'data', ( data ) => {
       console.log( 'Received', data );
     } );
 
@@ -38,3 +44,5 @@ peer.on( 'open', () => {
     const call = peer.call( 'functor001broom', st );
   } );
 } );
+
+console.log( "hi stan server" );

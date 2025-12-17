@@ -1,12 +1,19 @@
 import { Peer } from "https://esm.sh/peerjs@1.5.5?bundle-deps";
 
 const RemoteVideo = document.getElementById( 'remote_video' );
-const peer = new Peer( 'functor001broom' );
+const peer = new Peer(
+  'functor001broom', {
+  config: {
+    'iceServers': [
+      { urls: 'stun:stun.l.google.com:19302' },
+    ]
+  }
+} );
 
 peer.on( 'connection', ( conn ) => {
-  conn.on( 'open', function () {
+  conn.on( 'open', () => {
     // Receive messages
-    conn.on( 'data', function ( data ) {
+    conn.on( 'data', ( data ) => {
       console.log( 'Received', data );
     } );
 
@@ -15,9 +22,9 @@ peer.on( 'connection', ( conn ) => {
   } );
 } );
 
-peer.on( 'call', function ( call ) {
+peer.on( 'call', ( call ) => {
   call.answer();
-  call.on( 'stream', function ( stream ) {
+  call.on( 'stream', ( stream ) => {
     RemoteVideo.srcObject = stream;
   } );
 } );
