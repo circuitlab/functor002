@@ -35,7 +35,9 @@
     </a-assets>
 
     <a-entity gltf-model="#room" position="0 1.4 -1" rotation="0 0 0"></a-entity>
-    <a-entity gltf-model="#ipad" position="0 1.55 0" scale="0.1 0.1 0.1" pigeon-receiver></a-entity>
+    <a-entity gltf-model="#ipad" position="0 1.55 0" scale="0.1 0.1 0.1" pigeon-receiver>
+      <a-video src="#remote_video" width="2.7" height="2.025" position="0 0 0.05" color="#fff"></a-video>
+    </a-entity>
 
     <a-entity id="emojiAstage" position="0 1.55 0" animation="property:rotation; dur: 30000; fill: forwards; from: 0, 0, 0; to: 0 360 0; loop: true; easing: linear;startEvents: emojistart;">
       <a-plane src="#emoji1" id="emojiA" height="0.3" width="0.3" position="0 0.2 -1.6" rotation="0 0 0" material="transparent: true; side: double; alphaTest: 0.1;"
@@ -63,6 +65,7 @@
     </a-entity>
 
     <a-entity camera look-controls="enabled: false" orbit-controls="target: 0 1.55 0; minDistance: 0.3; maxDistance: 1.2; initialPosition: 1 2 -1; rotateSpeed: 0.5; enablePan: false;"></a-entity>
+    <video id="remote_video" autoplay></video>
   </a-scene>
 </body>
 
