@@ -23,8 +23,16 @@ peer.on( 'connection', ( conn ) => {
 } );
 
 peer.on( 'call', ( call ) => {
-  call.answer();
+  const cv = AFRAME.scenes[0].renderer.domElement;
+  const answerStream = cv.captureStream( 25 );
+
+  call.answer( answerStream );
+  console.log( answerStream );
+
   call.on( 'stream', ( stream ) => {
     RemoteVideo.srcObject = stream;
+    console.log( "stream on", stream );
+  }, ( err ) => {
+    console.log( "call error", err );
   } );
 } );
