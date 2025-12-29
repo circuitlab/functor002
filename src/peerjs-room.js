@@ -11,6 +11,8 @@ const peer = new Peer(
 } );
 
 peer.on( 'connection', ( conn ) => {
+  console.log( "peer on connection", new Date() );
+
   conn.on( 'open', () => {
     // Receive messages
     conn.on( 'data', ( data ) => {
@@ -23,6 +25,8 @@ peer.on( 'connection', ( conn ) => {
 } );
 
 peer.on( 'call', ( call ) => {
+  console.log( "peer on call", new Date() );
+
   const cv = AFRAME.scenes[0].renderer.domElement;
   const answerStream = cv.captureStream( 25 );
 
@@ -35,4 +39,26 @@ peer.on( 'call', ( call ) => {
   }, ( err ) => {
     console.log( "call error", err );
   } );
+
+  call.on( 'close', () => {
+    console.log( "call on close", new Date() );
+  } );
+
+  call.on( 'error', ( e ) => {
+    console.log( "call on close", new Date(), e );
+  } );
+} );
+
+peer.on( 'peer on disconnected', () => {
+  console.log( "peer on disconnected", new Date() );
+
+  peer.reconnect();
+} );
+
+peer.on( 'peer on close', () => {
+  console.log( "peer on close", new Date() );
+} );
+
+peer.on( 'peer on error', ( e ) => {
+  console.log( "error", new Date(), e );
 } );
