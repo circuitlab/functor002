@@ -11,8 +11,8 @@ AFRAME.registerComponent( "functor-webrtc-sender", {
       this.mergedCanvas = document.createElement( "canvas", { willReadFrequently: true } );
       this.context = this.mergedCanvas.getContext( '2d' );
 
-      this.mergedCanvas.width = 480; //this.video.videoWidth;
-      this.mergedCanvas.height = 640; //this.video.videoHeight;
+      this.mergedCanvas.width = 65 * 2; //this.video.videoWidth;
+      this.mergedCanvas.height = 135 * 2; //this.video.videoHeight;
 
       console.log( "canvas size", this.mergedCanvas.width, this.mergedCanvas.height, this.video.videoWidth, this.video.videoHeight );
 
@@ -65,8 +65,18 @@ AFRAME.registerComponent( "functor-webrtc-sender", {
         originalRender.call( this, scene, camera );
 
         if ( self.ready ) {
-          self.context.drawImage( self.video, 0, 0, self.mergedCanvas.width, self.mergedCanvas.height );
-          self.context.drawImage( this.domElement, 0, 0, self.mergedCanvas.width, self.mergedCanvas.height );
+          const targetWidth = self.mergedCanvas.width;
+          const targetHeight = self.mergedCanvas.height;
+          const ratio = targetWidth / targetHeight;
+
+          const sourceVideoWidth = self.video.videoWidth * ratio;
+          const sourceVideoStartX = ( self.video.videoWidth - sourceVideoWidth ) / 2;
+
+          const sourceDomWidth = this.domElement.width * ratio;
+          const sourceDomStartX = ( this.domElement.width - sourceDomWidth ) / 2;
+
+          self.context.drawImage( self.video, sourceVideoStartX, 0, sourceVideoWidth, self.video.videoHeight, 0, 0, self.mergedCanvas.width, self.mergedCanvas.height );
+          self.context.drawImage( this.domElement, sourceDomStartX, 0, sourceDomWidth, this.domElement.height, 0, 0, self.mergedCanvas.width, self.mergedCanvas.height );
         }
       };
 
