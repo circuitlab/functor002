@@ -10,6 +10,8 @@ import { GPUComputationRenderer } from "three/examples/jsm/Addons.js";
 
 import { Loader3DTiles, PointCloudColoring } from 'three-loader-3dtiles';
 
+import { TextureVisualizer } from "./texture-visualizer.js";
+
 import emojiFS from "./emojiFS.frag";
 import emojiVS from "./emojiVS.vert";
 import fragmentShaderPosition from "./FragmentShaderPosition.frag";
@@ -44,6 +46,9 @@ let tilesRuntime = null;
 const clock = new THREE.Clock();
 
 const copyrightElement = document.querySelector( "#credit" );
+
+let textureVisualizer = null;
+const canvasElement = document.getElementById( 'textureCanvas' );
 
 init();
 
@@ -100,6 +105,15 @@ function init() {
   };
 
   initBirds();
+
+  if ( canvasElement ) {
+    try {
+      textureVisualizer = new TextureVisualizer();
+      textureVisualizer.init( canvasElement, renderer, gpuCompute, positionVariable, WIDTH );
+    } catch ( err ) {
+      console.warn( 'Could not initialize texture visualizer:', err );
+    }
+  }
 
   document.addEventListener( "click", () => {
     if ( navigator.wakeLock ) {
@@ -386,6 +400,10 @@ function render() {
   mouseY = 10000;
 
   gpuCompute.compute();
+
+  if ( textureVisualizer ) {
+    textureVisualizer.update();
+  }
 
   birdUniforms['texturePosition'].value = gpuCompute.getCurrentRenderTarget( positionVariable ).texture;
   birdUniforms['textureVelocity'].value = gpuCompute.getCurrentRenderTarget( velocityVariable ).texture;
