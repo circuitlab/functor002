@@ -17,6 +17,8 @@ import emojiVS from "./emojiVS.vert";
 import fragmentShaderPosition from "./FragmentShaderPosition.frag";
 import fragmentShaderVelocity from "./FragmentShaderVelocity.frag";
 
+import { Peer } from "https://esm.sh/peerjs@1.5.5?bundle-deps";
+
 /* TEXTURE WIDTH FOR SIMULATION */
 const WIDTH = 128;
 
@@ -110,6 +112,35 @@ function init() {
     try {
       textureVisualizer = new TextureVisualizer();
       textureVisualizer.init( canvasElement, renderer, gpuCompute, positionVariable, WIDTH );
+
+      const peer = new Peer(
+        'functor001bboids', {
+        config: {
+          'iceServers': [
+            { urls: 'stun:stun.l.google.com:19302' },
+          ]
+        }
+      } );
+
+      peer.on( 'open', () => {
+        const conn = peer.connect( 'functor001bboidreceiver' );
+
+        conn.on( 'open', () => {
+          // Receive messages
+          conn.on( 'data', ( data ) => {
+            console.log( 'Received', data );
+          } );
+
+          // Send messages
+          conn.send( 'Hello!' );
+
+          const call = peer.call( 'functor001bboidreceiver', canvasElement.captureStream( 10 ) );
+
+          call.on( "stream", ( answer ) => {
+            console.log( "on stream", answer );
+          } );
+        } );
+      } );
     } catch ( err ) {
       console.warn( 'Could not initialize texture visualizer:', err );
     }

@@ -6,6 +6,8 @@ import { Loader3DTiles, PointCloudColoring } from 'three-loader-3dtiles';
 import emojiFS from "./emojiFS.frag";
 import emojiVS from "./emojiVS.vert";
 
+import { Peer } from "https://esm.sh/peerjs@1.5.5?bundle-deps";
+
 const canvasElement = document.getElementById( 'textureCanvas' );
 
 /* TEXTURE WIDTH FOR SIMULATION */
@@ -72,12 +74,65 @@ function init() {
   initBirds();
 
   if ( canvasElement ) {
-    try {
-      textureVisualizer = new TextureVisualizer();
-      textureVisualizer.init( canvasElement, renderer, gpuCompute, positionVariable, WIDTH );
-    } catch ( err ) {
-      console.warn( 'Could not initialize texture visualizer:', err );
-    }
+    const peer = new Peer(
+      'functor001bboidreceiver', {
+      config: {
+        'iceServers': [
+          { urls: 'stun:stun.l.google.com:19302' },
+        ]
+      }
+    } );
+
+    peer.on( 'connection', ( conn ) => {
+      console.log( "peer on connection", new Date() );
+
+      conn.on( 'open', () => {
+        // Receive messages
+        conn.on( 'data', ( data ) => {
+          console.log( 'Received', data );
+        } );
+
+        // Send messages
+        conn.send( 'Hello!' );
+      } );
+    } );
+
+    peer.on( 'call', ( call ) => {
+      console.log( "peer on call", new Date() );
+
+      call.answer();
+
+      call.on( 'stream', ( stream ) => {
+        canvasElement.srcObject = stream;
+        console.log( "stream on", stream );
+      }, ( err ) => {
+        console.log( "call error", err );
+      } );
+
+      call.on( 'close', () => {
+        console.log( "call on close", new Date() );
+      } );
+
+      call.on( 'error', ( e ) => {
+        console.log( "call on close", new Date(), e );
+      } );
+    } );
+
+    peer.on( 'peer on disconnected', () => {
+      console.log( "peer on disconnected", new Date() );
+
+      peer.reconnect();
+    } );
+
+    peer.on( 'peer on close', () => {
+      console.log( "peer on close", new Date() );
+    } );
+
+    peer.on( 'peer on error', ( e ) => {
+      console.log( "error", new Date(), e );
+    } );
+
+
   }
 
   document.addEventListener( "click", () => {
