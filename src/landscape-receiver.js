@@ -4,11 +4,15 @@ import { OrbitControls } from "three/examples/jsm/Addons.js";
 import { Loader3DTiles, PointCloudColoring } from 'three-loader-3dtiles';
 
 import emojiFS from "./emojiFS.frag";
-import emojiVS from "./emojiVS.vert";
+import emojiVS from "./emojiVSreceiver.vert";
 
 import { Peer } from "https://esm.sh/peerjs@1.5.5?bundle-deps";
 
 const canvasElement = document.getElementById( 'textureCanvas' );
+// Create a separate canvas for video processing to avoid conflicts
+const videoProcessingCanvas = document.createElement( 'canvas' );
+videoProcessingCanvas.width = 128;
+videoProcessingCanvas.height = 128;
 
 /* TEXTURE WIDTH FOR SIMULATION */
 const WIDTH = 128;
@@ -34,6 +38,10 @@ let positionVariable;
 let positionUniforms;
 let velocityUniforms;
 let birdUniforms;
+
+// 新しいテクスチャ用の変数
+let videoTexture;
+let videoTextureNeedsUpdate = false;
 
 let tilesRuntime = null;
 const clock = new THREE.Clock();
@@ -105,6 +113,28 @@ function init() {
       call.on( 'stream', ( stream ) => {
         canvasElement.srcObject = stream;
         console.log( "stream on", stream );
+
+        // Handle video data processing
+        const processVideoFrame = () => {
+          if ( canvasElement.readyState === canvasElement.HAVE_ENOUGH_DATA ) {
+            // Draw video frame to our processing canvas
+            const ctx = videoProcessingCanvas.getContext( '2d' );
+            if ( ctx ) {
+              // Draw the video frame to our processing canvas
+              ctx.drawImage( canvasElement, 0, 0, videoProcessingCanvas.width, videoProcessingCanvas.height );
+
+              // Update the texture if it exists
+              if ( videoTexture ) {
+                videoTextureNeedsUpdate = true;
+              }
+            }
+          }
+          // Continue processing frames at ~30fps
+          requestAnimationFrame( processVideoFrame );
+        };
+
+        // Start processing video frames
+        processVideoFrame();
       }, ( err ) => {
         console.log( "call error", err );
       } );
@@ -231,7 +261,9 @@ function initBirds() {
       'texturePosition': { value: null },
       'textureVelocity': { value: null },
       'uWidth': { value: WIDTH },
-      'uAtlasWidth': { value: ATLAS_GRID_WIDTH }
+      'uAtlasWidth': { value: ATLAS_GRID_WIDTH },
+      // 映像テクスチャを追加
+      'textureVideo': { value: null }
     },
     vertexShader: emojiVS,
     fragmentShader: emojiFS,
@@ -243,6 +275,38 @@ function initBirds() {
   const birds = new THREE.Points( geometry, material );
   birds.frustumCulled = false;
   scene.add( birds );
+
+  // 映像テクスチャの初期化
+  if ( canvasElement ) {
+    // Wait for video to be ready before creating texture
+    const initializeVideoTexture = () => {
+      // Check if we have valid dimensions from either canvas
+      const validDimensions = ( canvasElement.videoWidth > 0 && canvasElement.videoHeight > 0 ) ||
+        ( videoProcessingCanvas.width > 0 && videoProcessingCanvas.height > 0 );
+
+      if ( validDimensions ) {
+        // Create texture from our processing canvas instead of the display canvas
+        videoTexture = new THREE.Texture( videoProcessingCanvas );
+        videoTexture.needsUpdate = false;
+        videoTexture.flipY = false;
+        videoTexture.wrapS = THREE.ClampToEdgeWrapping;
+        videoTexture.wrapT = THREE.ClampToEdgeWrapping;
+        videoTexture.minFilter = THREE.LinearFilter;
+        videoTexture.magFilter = THREE.LinearFilter;
+        // Disable mipmap generation for video textures
+        videoTexture.generateMipmaps = false;
+
+        // パーティクルのuniformsに映像テクスチャを設定
+        birdUniforms['textureVideo'].value = videoTexture;
+      } else {
+        // Retry after a short delay
+        setTimeout( initializeVideoTexture, 100 );
+      }
+    };
+
+    // Start the initialization process
+    initializeVideoTexture();
+  }
 }
 
 function onWindowResize() {
@@ -267,6 +331,12 @@ function animate() {
 function render() {
   //birdUniforms['texturePosition'].value = gpuCompute.getCurrentRenderTarget( positionVariable ).texture;
   //birdUniforms['textureVelocity'].value = gpuCompute.getCurrentRenderTarget( velocityVariable ).texture;
+
+  // 映像テクスチャの更新処理
+  if ( videoTextureNeedsUpdate ) {
+    videoTexture.needsUpdate = true;
+    videoTextureNeedsUpdate = false;
+  }
 
   renderer.render( scene, camera );
 
