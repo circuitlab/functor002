@@ -5,6 +5,7 @@ export default {
   input: [
     'src/main.js',
     'src/landscape.js',
+    'src/landscape-receiver.js',
     'src/pa.js',
     'src/atmosphere.js',
     'src/pigeon-functor.js',
