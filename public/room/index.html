@@ -18,50 +18,56 @@
   <script src="/assets/js/pigeon-receiver.js" type="module"></script>
   <script src="/assets/js/aframe-emoji-boid.js" type="module"></script>
   <script src="/assets/js/emoji-starter.js" type="module"></script>
+  <script src="/assets/js/peerjs-room.js" type="module"></script>
 </head>
 
 <body style="margin : 0px; overflow: hidden;">
   <a-scene background="color: #fff" emoji-starter>
 
     <a-assets>
-      <a-asset-item id="room" src="/assets/gltf/pa.glb"></a-asset-item>
-      <a-asset-item id="ipad" src="/assets/gltf/ipad.glb"></a-asset-item>
+      <a-asset-item id="room" src="/assets/gltf/villamoderna.glb"></a-asset-item>
+      <a-asset-item id="iphone" src="/assets/gltf/iphonex.glb"></a-asset-item>
       <img id="emoji1" src="/assets/images/emoji1.png" />
       <img id="emoji2" src="/assets/images/emoji2.png" />
       <img id="emoji3" src="/assets/images/emoji3.png" />
       <img id="emoji4" src="/assets/images/emoji4.png" />
       <img id="emoji5" src="/assets/images/emoji5.png" />
+      <video id="remote_video" autoplay loop="true" src="/assets/video/black.mp4"></video>
     </a-assets>
 
-    <a-entity gltf-model="#room" position="0 1.4 -1" rotation="0 0 0"></a-entity>
-    <a-entity gltf-model="#ipad" position="0 1.55 0" scale="0.1 0.1 0.1" pigeon-receiver></a-entity>
-
-    <a-entity id="emojiAstage" position="0 1.55 0" animation="property:rotation; dur: 30000; fill: forwards; from: 0, 0, 0; to: 0 360 0; loop: true; easing: linear;startEvents: emojistart;">
-      <a-plane src="#emoji1" id="emojiA" height="0.3" width="0.3" position="0 0.2 -1.6" rotation="0 0 0" material="transparent: true; side: double; alphaTest: 0.1;"
-        animation="property:position; dur: 12000; fill: forwards; from: 0 0.2 -1.6; to: 0 -0.2 -1.6; loop: true; dir: alternate; easing: easeInOutSine; startEvents: emojistart;"></a-plane>
+    <a-entity gltf-model="#room" position="-0.7 1.2 -0.2" rotation="0 -60 0"></a-entity>
+    <a-entity gltf-model="#iphone" position="0 1.6 0" scale="0.001 0.001 0.001" pigeon-receiver>
+      <a-video src="#remote_video" width="65" height="135" position="0 0 3.8" color="#fff"></a-video>
     </a-entity>
 
-    <a-entity id="emojiBstage" position="0 1.55 0" animation="property:rotation; dur: 45000; fill: forwards; from: 0, 0, 0; to: 0 360 0; loop: true; easing: linear;startEvents: emojistart;">
-      <a-plane src="#emoji2" id="emojiB" height="0.4" width="0.4" position="0 0.3 0.8" rotation="0 0 0" material="transparent: true; side: double; alphaTest: 0.1;"
-        animation="property:position; dur: 11000; fill: forwards; from: 0 0.3 0.8; to: 0 -0.1 0.8; loop: true; dir: alternate; easing: easeInOutSine; startEvents: emojistart;"></a-plane>
+    <a-entity rotation="0 30 0">
+      <a-entity id="emojiAstage" position="0 1.55 0" animation="property:rotation; dur: 30000; fill: forwards; from: 0, 0, 0; to: 0 360 0; loop: true; easing: linear;startEvents: emojistart;">
+        <a-plane src="#emoji1" id="emojiA" height="0.3" width="0.3" position="0 0.2 -1.6" rotation="0 0 0" material="transparent: true; side: double; alphaTest: 0.1;"
+          animation="property:position; dur: 12000; fill: forwards; from: 0 0.2 -1.6; to: 0 -0.2 -1.6; loop: true; dir: alternate; easing: easeInOutSine; startEvents: emojistart;"></a-plane>
+      </a-entity>
+
+      <a-entity id="emojiBstage" position="0 1.55 0" animation="property:rotation; dur: 45000; fill: forwards; from: 0, 0, 0; to: 0 360 0; loop: true; easing: linear;startEvents: emojistart;">
+        <a-plane src="#emoji2" id="emojiB" height="0.4" width="0.4" position="0 0.3 0.8" rotation="0 0 0" material="transparent: true; side: double; alphaTest: 0.1;"
+          animation="property:position; dur: 11000; fill: forwards; from: 0 0.3 0.8; to: 0 -0.1 0.8; loop: true; dir: alternate; easing: easeInOutSine; startEvents: emojistart;"></a-plane>
+      </a-entity>
+
+      <a-entity id="emojiCstage" position="0 1.55 0" animation="property:rotation; dur: 40000; fill: forwards; from: 0, 0, 0; to: 0 360 0; loop: true; easing: linear;startEvents: emojistart;">
+        <a-plane src="#emoji3" id="emojiC" height="0.3" width="0.3" position="0.8 0.4 1.2" rotation="0 0 0" material="transparent: true; side: double; alphaTest: 0.1;"
+          animation="property:position; dur: 10000; fill: forwards; from: 0.8 0.4 1.2; to: 0.8 -0.2 1.2; loop: true; dir: alternate; easing: easeInOutSine; startEvents: emojistart;"></a-plane>
+      </a-entity>
+
+      <a-entity id="emojiDstage" position="0 1.55 0" animation="property:rotation; dur: 35000; fill: forwards; from: 0, 0, 0; to: 0 360 0; loop: true; easing: linear;startEvents: emojistart;">
+        <a-plane src="#emoji4" id="emojiD" height="0.4" width="0.4" position="-0.4 0.1 1.1" rotation="0 0 0" material="transparent: true; side: double; alphaTest: 0.1;"
+          animation="property:position; dur: 14000; fill: forwards; from: -0.4 0.1 1.1; to: -0.4 -0.2 1.1; loop: true; dir: alternate; easing: easeInOutSine; startEvents: emojistart;"></a-plane>
+      </a-entity>
+
+      <a-entity id="emojiEstage" position="0 1.55 0" animation="property:rotation; dur: 25000; fill: forwards; from: 0, 0, 0; to: 0 360 0; loop: true; easing: linear;startEvents: emojistart;">
+        <a-plane src="#emoji5" id="emojiE" height="0.3" width="0.3" position="-0.1 0.7 -1" rotation="0 0 0" material="transparent: true; side: double; alphaTest: 0.1;"
+          animation="property:position; dur: 13000; fill: forwards; from: -0.1 0.7 -1; to: -0.1 0.1 -1; loop: true; dir: alternate; easing: easeInOutSine; startEvents: emojistart;"></a-plane>
+      </a-entity>
     </a-entity>
 
-    <a-entity id="emojiCstage" position="0 1.55 0" animation="property:rotation; dur: 40000; fill: forwards; from: 0, 0, 0; to: 0 360 0; loop: true; easing: linear;startEvents: emojistart;">
-      <a-plane src="#emoji3" id="emojiC" height="0.3" width="0.3" position="0.8 0.4 1.2" rotation="0 0 0" material="transparent: true; side: double; alphaTest: 0.1;"
-        animation="property:position; dur: 10000; fill: forwards; from: 0.8 0.4 1.2; to: 0.8 -0.2 1.2; loop: true; dir: alternate; easing: easeInOutSine; startEvents: emojistart;"></a-plane>
-    </a-entity>
-
-    <a-entity id="emojiDstage" position="0 1.55 0" animation="property:rotation; dur: 35000; fill: forwards; from: 0, 0, 0; to: 0 360 0; loop: true; easing: linear;startEvents: emojistart;">
-      <a-plane src="#emoji4" id="emojiD" height="0.4" width="0.4" position="-0.4 0.1 1.1" rotation="0 0 0" material="transparent: true; side: double; alphaTest: 0.1;"
-        animation="property:position; dur: 14000; fill: forwards; from: -0.4 0.1 1.1; to: -0.4 -0.2 1.1; loop: true; dir: alternate; easing: easeInOutSine; startEvents: emojistart;"></a-plane>
-    </a-entity>
-
-    <a-entity id="emojiEstage" position="0 1.55 0" animation="property:rotation; dur: 25000; fill: forwards; from: 0, 0, 0; to: 0 360 0; loop: true; easing: linear;startEvents: emojistart;">
-      <a-plane src="#emoji5" id="emojiE" height="0.3" width="0.3" position="-0.1 0.7 -1" rotation="0 0 0" material="transparent: true; side: double; alphaTest: 0.1;"
-        animation="property:position; dur: 13000; fill: forwards; from: -0.1 0.7 -1; to: -0.1 0.1 -1; loop: true; dir: alternate; easing: easeInOutSine; startEvents: emojistart;"></a-plane>
-    </a-entity>
-
-    <a-entity camera look-controls="enabled: false" orbit-controls="target: 0 1.55 0; minDistance: 0.3; maxDistance: 1.2; initialPosition: 1 2 -1; rotateSpeed: 0.5; enablePan: false;"></a-entity>
+    <a-entity camera look-controls="enabled: false" orbit-controls="target: 0 1.55 0; minDistance: 0.3; maxDistance: 1.2; initialPosition: 1 2 -1; rotateSpeed: 0.5; enablePan: false; autoRotate: true; autoRotateSpeed: 0.1;"></a-entity>
   </a-scene>
 </body>
 

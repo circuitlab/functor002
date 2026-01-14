@@ -2,7 +2,7 @@ import { Pigeon } from "./Pigeon.js";
 
 AFRAME.registerComponent( "pigeon-functor", {
   init() {
-    this.pigeon = new Pigeon( "wss://vmb207.circuitlab.team:3001/pigeon/", 'functor' );
+    this.pigeon = new Pigeon( "wss://192.168.128.37:3001/pigeon/", 'functor' );
 
     this.x = 0;
     this.y = 0;

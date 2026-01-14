@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+</head>
+
+<body>
+</body>
+<script type="module">
+import { Peer } from "https://esm.sh/peerjs@1.5.5?bundle-deps";
+
+const showMessage = (text) => {
+  const message = document.createElement('div')
+     
+  message.innerText = text;
+
+  document.body.appendChild(message);
+}
+
+const peer = new Peer(
+  'functortestA', {
+  config: {
+    'iceServers': [
+      { urls: 'stun:stun.l.google.com:19302' },
+    ]
+  }
+} );
+
+peer.on( 'open', (id) => {
+  const conn = peer.connect( 'functortestB' );
+
+  showMessage('open as ' + id)
+
+  conn.on( 'open', () => {
+    // Receive messages
+    conn.on( 'data', ( data ) => {
+      showMessage('Received data: ' + data);
+    } );
+
+    // Send messages
+    conn.send( 'Hello! I am ' + id );
+  });
+});
+  </script>
+
+</html>

@@ -12,15 +12,35 @@
   <link rel="manifest" href="/functor/manifest.json" />
   <link rel="stylesheet" href="/assets/css/functor.css">
   </style>
-  <script src="/assets/lib/aframe-v1.7.1.min.js"></script>
+  <script src="https://aframe.io/releases/1.7.1/aframe.min.js"></script>
   <script src="/assets/lib/aframe-ar.js"></script>
-  <script src="/assets/js/pigeon-functor-local.js" type="module"></script>
+  <script src="/assets/js/pigeon-functor.js" type="module"></script>
   <script src="/assets/js/aframe-emoji-boid.js" type="module"></script>
   <script src="/assets/js/emoji-starter.js" type="module"></script>
+  <script src="/assets/js/peerjs-functor.js" type="module"></script>
 </head>
 
 <body style="margin : 0px; overflow: hidden;">
-  <a-scene xr-mode-ui="enabled: true" arjs emoji-starter>
+  <div style="position: absolute; bottom: 0; left: 0; width: 100px; min-height:100px; height: 100px; min-height:100px; border: 1px solid blue; background-color: white; z-index: 100;">
+    <video id="videoFromArjs" autoplay muted playsinline style="width: 100px; min-height:100px; height: 100px;"></video>
+    <div style="background-color: blue; color: white;">videoFromArjs</div>
+  </div>
+  <div style="position: absolute; bottom: 100px; left: 100px; width: 100px; min-height:100px; height: 100px; border: 1px solid red; background-color: white; z-index: 100;">
+    <video id="videoFromAframe" autoplay muted playsinline style="width: 100px; min-height:100px; height: 100px;"></video>
+    <div style="background-color: red; color: white;">videoFromAframe</div>
+  </div>
+  <div style="position: absolute; bottom: 200px; left: 200px; width: 100px; min-height:100px; height: 100px; border: 1px solid green; background-color: white; z-index: 100;">
+    <video id="videoMerged" autoplay muted playsinline style="width: 100px; min-height:100px; height: 100px;"></video>
+    <div style="background-color: green; color: white;">videoMerged</div>
+  </div>
+  <div style="position: absolute; bottom: 300px; left: 300px; width: 100px; min-height:100px; height: 100px; border: 1px solid purple; background-color: white; z-index: 100;">
+    <video id="aframe-video" autoplay muted playsinline style="width: 100px; min-height:100px; height: 100px;"></video>
+    <div style="background-color: purple; color: white;">aframe-video</div>
+  </div>
+
+  <a-scene xr-mode-ui="enabled: true"
+    arjs
+    emoji-starter functor-webrtc-sender functor-videotest>
     <a-marker preset="hiro">
       <a-box position="0 0.5 0" material="color: red;"></a-box>
     </a-marker>
@@ -32,6 +52,7 @@
       <img id="emoji3" src="/assets/images/emoji3.png" />
       <img id="emoji4" src="/assets/images/emoji4.png" />
       <img id="emoji5" src="/assets/images/emoji5.png" />
+      <video autoplay muted playsinline loop="true" src="/assets/video/black.mp4"></video>
     </a-assets>
 
     <a-entity id="emojiAstage" position="0 1.55 0" animation="property:rotation; dur: 30000; fill: forwards; from: 0, 0, 0; to: 0 360 0; loop: true; easing: linear;startEvents: emojistart;">

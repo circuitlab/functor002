@@ -14,6 +14,8 @@ export default {
     'src/emoji-starter.js',
     'src/pigeon-functor-local.js',
     'src/pigeon-receiver-local.js',
+    'src/peerjs-functor.js',
+    'src/peerjs-room.js'
   ],
   output: {
     dir: 'public/assets/js/',

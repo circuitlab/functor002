@@ -12,15 +12,21 @@
   <link rel="manifest" href="/functor/manifest.json" />
   <link rel="stylesheet" href="/assets/css/functor.css">
   </style>
-  <script src="/assets/lib/aframe-v1.7.1.min.js"></script>
+  <script src="https://aframe.io/releases/1.7.1/aframe.min.js"></script>
   <script src="/assets/lib/aframe-ar.js"></script>
   <script src="/assets/js/pigeon-functor.js" type="module"></script>
   <script src="/assets/js/aframe-emoji-boid.js" type="module"></script>
   <script src="/assets/js/emoji-starter.js" type="module"></script>
+  <script src="/assets/js/peerjs-functor.js" type="module"></script>
 </head>
 
 <body style="margin : 0px; overflow: hidden;">
-  <a-scene xr-mode-ui="enabled: true" arjs emoji-starter>
+  <div style="position: absolute; bottom: 0; left: 0; width: 100px; min-height:100px; height: 100px; min-height:100px; border: 1px solid blue; background-color: white; z-index: 100;">
+    <video id="videoMerged" autoplay muted playsinline style="width: 100px; min-height:100px; height: 100px;"></video>
+    <div style="background-color: blue; color: white;">mergedCanvas</div>
+  </div>
+
+  <a-scene xr-mode-ui="enabled: true" embedded arjs emoji-starter functor-webrtc-sender>
     <a-marker preset="hiro">
       <a-box position="0 0.5 0" material="color: red;"></a-box>
     </a-marker>
