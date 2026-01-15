@@ -48,10 +48,6 @@ const copyrightElement = document.querySelector( "#credit" );
 let textureVisualizer = null;
 const canvasElement = document.getElementById( 'textureCanvas' );
 
-if ( queryParams.get( "debug" ) !== "true" ) {
-  canvasElement.style.display = "none";
-}
-
 await librariesLoaded;
 
 init();
