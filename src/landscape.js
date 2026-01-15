@@ -132,7 +132,31 @@ function init() {
           // Send messages
           conn.send( 'Hello!' );
 
-          const call = peer.call( 'functor001bboidreceiver', canvasElement.captureStream( 10 ) );
+          const call = peer.call( 'functor001bboidreceiver', canvasElement.captureStream( 30 ) );
+
+          const videoSender = call.peerConnection.getSenders().filter( function ( s ) {
+            return s.track && s.track.kind == "video";
+          } )[0];
+
+          if ( videoSender ) {
+            const parameters = videoSender.getParameters();
+
+            console.log( videoSender, parameters );
+
+            if ( !parameters.encodings ) {
+              parameters.encodings = [{ maxBitrate: 0 }];
+            }
+
+            parameters.encodings[0].maxBitrate = 10000000; // 5 Mbps
+
+            videoSender.setParameters( parameters )
+              .then( () => {
+                console.log( "Max bitrate set to 10 Mbps" );
+              } )
+              .catch( e => {
+                console.error( "Error setting bitrate:", e );
+              } );
+          }
 
           call.on( "stream", ( answer ) => {
             console.log( "on stream", answer );
