@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import './bootstrap.js';
 
 import { GPUComputationRenderer } from "three/examples/jsm/Addons.js";
 
