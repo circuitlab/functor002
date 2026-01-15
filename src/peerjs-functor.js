@@ -1,5 +1,4 @@
-const AFRAME = window.AFRAME;
-const Peer = window.Peer;
+import './bootstrap.js';
 
 AFRAME.registerComponent( "functor-webrtc-sender", {
   init() {

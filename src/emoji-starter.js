@@ -1,4 +1,4 @@
-const AFRAME = window.AFRAME;
+import "aframe";
 
 AFRAME.registerComponent( "emoji-starter", {
   init() {

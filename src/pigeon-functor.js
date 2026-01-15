@@ -1,7 +1,5 @@
+import './bootstrap.js';
 import { Pigeon } from "./Pigeon.js";
-
-const AFRAME = window.AFRAME;
-const THREE = window.THREE;
 
 AFRAME.registerComponent( "pigeon-functor", {
   init() {

@@ -1,12 +1,11 @@
+import './bootstrap.js';
+
 import { GPUComputationRenderer } from "three/examples/jsm/Addons.js";
 
 import emojiFS from "./emojiFSRoom.frag";
 import emojiVS from "./emojiVSRoom.vert";
 import fragmentShaderPosition from "./FragmentShaderPositionSmall.frag";
 import fragmentShaderVelocity from "./FragmentShaderVelocitySmall.frag";
-
-const AFRAME = window.AFRAME;
-const THREE = window.THREE;
 
 AFRAME.registerComponent( "emoji-boid", {
   init() {

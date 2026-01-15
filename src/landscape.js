@@ -1,3 +1,5 @@
+import { librariesLoaded } from './bootstrap.js';
+
 import Stats from "three/examples/jsm/libs/stats.module.js";
 import { GUI } from "three/examples/jsm/libs/lil-gui.module.min.js";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
@@ -12,9 +14,6 @@ import emojiFS from "./emojiFS.frag";
 import emojiVS from "./emojiVS.vert";
 import fragmentShaderPosition from "./FragmentShaderPosition.frag";
 import fragmentShaderVelocity from "./FragmentShaderVelocity.frag";
-
-const Peer = window.Peer;
-const THREE = window.THREE;
 
 /* TEXTURE WIDTH FOR SIMULATION */
 const WIDTH = 128;
@@ -48,6 +47,8 @@ const copyrightElement = document.querySelector( "#credit" );
 
 let textureVisualizer = null;
 const canvasElement = document.getElementById( 'textureCanvas' );
+
+await librariesLoaded;
 
 init();
 

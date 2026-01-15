@@ -1,12 +1,10 @@
-import * as THREE from 'three';
+import { librariesLoaded } from './bootstrap.js';
 
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 import { Loader3DTiles, PointCloudColoring } from 'three-loader-3dtiles';
 
 import emojiFS from "./emojiFS.frag";
 import emojiVS from "./emojiVSreceiver.vert";
-
-const Peer = window.Peer;
 
 const canvasElement = document.getElementById( 'textureCanvas' );
 // Create a separate canvas for video processing to avoid conflicts
@@ -34,6 +32,8 @@ let tilesRuntime = null;
 const clock = new THREE.Clock();
 
 const copyrightElement = document.querySelector( "#credit" );
+
+await librariesLoaded;
 
 init();
 

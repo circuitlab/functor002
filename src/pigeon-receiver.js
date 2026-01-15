@@ -1,6 +1,5 @@
+import './bootstrap.js';
 import { Pigeon } from "./Pigeon.js";
-
-const AFRAME = window.AFRAME;
 
 AFRAME.registerComponent( "pigeon-receiver", {
   init() {

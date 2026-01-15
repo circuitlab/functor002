@@ -1,6 +1,11 @@
-const Peer = window.Peer;
+import { librariesLoaded } from './bootstrap.js';
+import 'aframe-environment-component';
+import 'aframe-orbit-controls';
 
 const RemoteVideo = document.getElementById( 'remote_video' );
+
+await librariesLoaded;
+
 const peer = new Peer(
   'functor001broom', {
   config: {
