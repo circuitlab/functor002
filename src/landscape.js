@@ -2,8 +2,6 @@ import * as THREE from 'three';
 
 import Stats from "three/examples/jsm/libs/stats.module.js";
 import { GUI } from "three/examples/jsm/libs/lil-gui.module.min.js";
-import { GLTFLoader } from "three/examples/jsm/Addons.js";
-
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 
 import { GPUComputationRenderer } from "three/examples/jsm/Addons.js";
@@ -242,7 +240,6 @@ function init() {
 }
 
 function initComputeRenderer() {
-
   gpuCompute = new GPUComputationRenderer( WIDTH, WIDTH, renderer );
 
   const dtPosition = gpuCompute.createTexture();
@@ -279,15 +276,11 @@ function initComputeRenderer() {
   const error = gpuCompute.init();
 
   if ( error !== null ) {
-
     console.error( error );
-
   }
-
 }
 
 function initBirds() {
-
   const BIRD_COUNT = WIDTH * WIDTH;
   const emojis = ['😄', '😃', '😀', '😊', '☺', '😉', '😍', '😘', '😚', '😗', '😙', '😜', '😝', '😛', '😳', '😁', '😔', '😌', '😒', '😞', '😣', '😢', '😂', '😭', '😪', '😥', '😰', '😅', '😓', '😩', '😫', '😨', '😱', '😠', '😡', '😤', '😖', '😆', '😋', '😷', '😎', '😴', '😵', '😲', '😟', '😦', '😧', '😈', '👿', '😮', '😬', '😐', '😕', '😯', '😶', '😇', '😏', '😑', '👲', '👳', '👮', '👷', '💂', '👶', '👦', '👧', '👨', '👩', '👴', '👵', '👱', '👼', '👸', '😺', '😸', '😻', '😽', '😼', '🙀', '😿', '😹', '😾', '👹', '👺', '🙈', '🙉', '🙊', '💀', '👽', '🐶', '🐺', '🐱', '🐭', '🐹', '🐰', '🐸', '🐯', '🐨', '🐻', '🐷', '🐽', '🐮', '🐗', '🐵', '🐒', '🐴', '🐑', '🐘', '🐼', '🐧', '🐦', '🐤', '🐥', '🐣', '🐔', '🐍', '🐢', '🐛', '🐝', '🐜', '🐞', '🐌', '🐙', '🐚', '🐠', '🐟', '🐬', '🐳', '🐋', '🐄', '🐏', '🐀', '🐃', '🐅', '🐇', '🐉', '🐎', '🐐', '🐓', '🐕', '🐖', '🐁', '🐂', '🐲', '🐡', '🐊', '🐫', '🐪', '🐆', '🐈', '🐩'];
   const ATLAS_GRID_WIDTH = Math.ceil( Math.sqrt( emojis.length ) );
@@ -344,11 +337,9 @@ function initBirds() {
 }
 
 function fillPositionTexture( texture ) {
-
   const theArray = texture.image.data;
 
   for ( let k = 0, kl = theArray.length; k < kl; k += 4 ) {
-
     const x = Math.random() * BOUNDS - BOUNDS_HALF;
     const y = Math.random() * BOUNDS - BOUNDS_HALF;
     const z = Math.random() * BOUNDS - BOUNDS_HALF;
@@ -357,17 +348,13 @@ function fillPositionTexture( texture ) {
     theArray[k + 1] = 40 + ( y / 10 );
     theArray[k + 2] = 100 + z;
     theArray[k + 3] = 1;
-
   }
-
 }
 
 function fillVelocityTexture( texture ) {
-
   const theArray = texture.image.data;
 
   for ( let k = 0, kl = theArray.length; k < kl; k += 4 ) {
-
     const x = Math.random() - 0.5;
     const y = Math.random() - 0.5;
     const z = Math.random() - 0.5;
@@ -376,13 +363,10 @@ function fillVelocityTexture( texture ) {
     theArray[k + 1] = y * 10;
     theArray[k + 2] = z * 10;
     theArray[k + 3] = 1;
-
   }
-
 }
 
 function onWindowResize() {
-
   windowHalfX = window.innerWidth / 2;
   windowHalfY = window.innerHeight / 2;
 
@@ -390,30 +374,22 @@ function onWindowResize() {
   camera.updateProjectionMatrix();
 
   renderer.setSize( window.innerWidth, window.innerHeight );
-
 }
 
 function onPointerMove( event ) {
-
   if ( event.isPrimary === false ) return;
 
   mouseX = event.clientX - windowHalfX;
   mouseY = event.clientY - windowHalfY;
-
 }
 
-//
-
 function animate() {
-
   render();
   stats.update();
   controls.update();
-
 }
 
 function render() {
-
   const now = performance.now();
   let delta = ( now - last ) / 1000;
 

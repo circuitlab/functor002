@@ -21,22 +21,9 @@ const queryParams = new URLSearchParams( document.location.search );
 
 let container, stats;
 let camera, scene, renderer, controls;
-let mouseX = 0, mouseY = 0;
-
-let windowHalfX = window.innerWidth / 2;
-let windowHalfY = window.innerHeight / 2;
 
 const BOUNDS = 800, BOUNDS_HALF = BOUNDS / 2;
 
-let last = performance.now();
-
-let shibuya;
-
-let gpuCompute;
-let velocityVariable;
-let positionVariable;
-let positionUniforms;
-let velocityUniforms;
 let birdUniforms;
 
 // 新しいテクスチャ用の変数
@@ -219,7 +206,6 @@ function init() {
 }
 
 function initBirds() {
-
   const BIRD_COUNT = WIDTH * WIDTH;
   const emojis = ['😄', '😃', '😀', '😊', '☺', '😉', '😍', '😘', '😚', '😗', '😙', '😜', '😝', '😛', '😳', '😁', '😔', '😌', '😒', '😞', '😣', '😢', '😂', '😭', '😪', '😥', '😰', '😅', '😓', '😩', '😫', '😨', '😱', '😠', '😡', '😤', '😖', '😆', '😋', '😷', '😎', '😴', '😵', '😲', '😟', '😦', '😧', '😈', '👿', '😮', '😬', '😐', '😕', '😯', '😶', '😇', '😏', '😑', '👲', '👳', '👮', '👷', '💂', '👶', '👦', '👧', '👨', '👩', '👴', '👵', '👱', '👼', '👸', '😺', '😸', '😻', '😽', '😼', '🙀', '😿', '😹', '😾', '👹', '👺', '🙈', '🙉', '🙊', '💀', '👽', '🐶', '🐺', '🐱', '🐭', '🐹', '🐰', '🐸', '🐯', '🐨', '🐻', '🐷', '🐽', '🐮', '🐗', '🐵', '🐒', '🐴', '🐑', '🐘', '🐼', '🐧', '🐦', '🐤', '🐥', '🐣', '🐔', '🐍', '🐢', '🐛', '🐝', '🐜', '🐞', '🐌', '🐙', '🐚', '🐠', '🐟', '🐬', '🐳', '🐋', '🐄', '🐏', '🐀', '🐃', '🐅', '🐇', '🐉', '🐎', '🐐', '🐓', '🐕', '🐖', '🐁', '🐂', '🐲', '🐡', '🐊', '🐫', '🐪', '🐆', '🐈', '🐩'];
   const ATLAS_GRID_WIDTH = Math.ceil( Math.sqrt( emojis.length ) );
@@ -310,7 +296,6 @@ function initBirds() {
 }
 
 function onWindowResize() {
-
   windowHalfX = window.innerWidth / 2;
   windowHalfY = window.innerHeight / 2;
 
@@ -318,20 +303,14 @@ function onWindowResize() {
   camera.updateProjectionMatrix();
 
   renderer.setSize( window.innerWidth, window.innerHeight );
-
 }
 
 function animate() {
-
   render();
   controls.update();
-
 }
 
 function render() {
-  //birdUniforms['texturePosition'].value = gpuCompute.getCurrentRenderTarget( positionVariable ).texture;
-  //birdUniforms['textureVelocity'].value = gpuCompute.getCurrentRenderTarget( velocityVariable ).texture;
-
   // 映像テクスチャの更新処理
   if ( videoTextureNeedsUpdate ) {
     videoTexture.needsUpdate = true;
