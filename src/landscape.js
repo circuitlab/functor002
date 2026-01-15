@@ -1,5 +1,3 @@
-import * as THREE from 'three';
-
 import Stats from "three/examples/jsm/libs/stats.module.js";
 import { GUI } from "three/examples/jsm/libs/lil-gui.module.min.js";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
@@ -15,7 +13,8 @@ import emojiVS from "./emojiVS.vert";
 import fragmentShaderPosition from "./FragmentShaderPosition.frag";
 import fragmentShaderVelocity from "./FragmentShaderVelocity.frag";
 
-import { Peer } from "https://esm.sh/peerjs@1.5.5?bundle-deps";
+const Peer = window.Peer;
+const THREE = window.THREE;
 
 /* TEXTURE WIDTH FOR SIMULATION */
 const WIDTH = 128;

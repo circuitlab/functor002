@@ -1,4 +1,4 @@
-import { Peer } from "https://esm.sh/peerjs@1.5.5?bundle-deps";
+const Peer = window.Peer;
 
 const RemoteVideo = document.getElementById( 'remote_video' );
 const peer = new Peer(

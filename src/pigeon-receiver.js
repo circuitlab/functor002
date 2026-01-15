@@ -1,5 +1,7 @@
 import { Pigeon } from "./Pigeon.js";
 
+const AFRAME = window.AFRAME;
+
 AFRAME.registerComponent( "pigeon-receiver", {
   init() {
     this.pigeon = new Pigeon( "wss://192.168.128.37:3001/pigeon/", 'functor' );

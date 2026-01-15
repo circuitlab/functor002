@@ -1,4 +1,5 @@
-import { Peer } from "https://esm.sh/peerjs@1.5.5?bundle-deps";
+const AFRAME = window.AFRAME;
+const Peer = window.Peer;
 
 AFRAME.registerComponent( "functor-webrtc-sender", {
   init() {

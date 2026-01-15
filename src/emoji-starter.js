@@ -1,3 +1,5 @@
+const AFRAME = window.AFRAME;
+
 AFRAME.registerComponent( "emoji-starter", {
   init() {
     this.emojiA = document.querySelector( "#emojiA" );

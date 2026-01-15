@@ -6,7 +6,7 @@ import { Loader3DTiles, PointCloudColoring } from 'three-loader-3dtiles';
 import emojiFS from "./emojiFS.frag";
 import emojiVS from "./emojiVSreceiver.vert";
 
-import { Peer } from "https://esm.sh/peerjs@1.5.5?bundle-deps";
+const Peer = window.Peer;
 
 const canvasElement = document.getElementById( 'textureCanvas' );
 // Create a separate canvas for video processing to avoid conflicts
