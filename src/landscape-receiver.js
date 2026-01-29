@@ -9,11 +9,12 @@ import emojiVS from "./emojiVSreceiver.vert";
 const canvasElement = document.getElementById( 'textureCanvas' );
 // Create a separate canvas for video processing to avoid conflicts
 const videoProcessingCanvas = document.createElement( 'canvas' );
-videoProcessingCanvas.width = 128;
-videoProcessingCanvas.height = 128;
+// 【変更点】 サイズを倍にする (128 -> 256)
+videoProcessingCanvas.width = 256;
+videoProcessingCanvas.height = 256;
 
 /* TEXTURE WIDTH FOR SIMULATION */
-const WIDTH = 128;
+const WIDTH = 128; // シミュレーション上の個数は変わらない
 
 const queryParams = new URLSearchParams( document.location.search );
 
@@ -47,8 +48,6 @@ function init() {
   camera.position.y = 50;
 
   scene = new THREE.Scene();
-  //scene.background = new THREE.Color( 0xffffff );
-  //scene.fog = new THREE.Fog( 0xffffff, 100, 1000 );
 
   renderer = new THREE.WebGLRenderer( {
     antialias: true,
@@ -82,86 +81,53 @@ function init() {
       console.log( "peer on connection", new Date() );
 
       conn.on( 'open', () => {
-        // Receive messages
-        conn.on( 'data', ( data ) => {
-          console.log( 'Received', data );
-        } );
-
-        // Send messages
+        conn.on( 'data', ( data ) => { console.log( 'Received', data ); } );
         conn.send( 'Hello!' );
       } );
     } );
 
     peer.on( 'call', ( call ) => {
       console.log( "peer on call", new Date() );
-
       call.answer();
 
       call.on( 'stream', ( stream ) => {
         canvasElement.srcObject = stream;
         console.log( "stream on", stream );
 
-        // Handle video data processing
         const processVideoFrame = () => {
           if ( canvasElement.readyState === canvasElement.HAVE_ENOUGH_DATA ) {
-            // Draw video frame to our processing canvas
             const ctx = videoProcessingCanvas.getContext( '2d' );
             if ( ctx ) {
-              // Draw the video frame to our processing canvas
+              // 256x256 のキャンバスに描画
               ctx.drawImage( canvasElement, 0, 0, videoProcessingCanvas.width, videoProcessingCanvas.height );
-
-              // Update the texture if it exists
               if ( videoTexture ) {
                 videoTextureNeedsUpdate = true;
               }
             }
           }
-          // Continue processing frames at ~30fps
           requestAnimationFrame( processVideoFrame );
         };
-
-        // Start processing video frames
         processVideoFrame();
-      }, ( err ) => {
-        console.log( "call error", err );
-      } );
+      }, ( err ) => { console.log( "call error", err ); } );
 
-      call.on( 'close', () => {
-        console.log( "call on close", new Date() );
-      } );
-
-      call.on( 'error', ( e ) => {
-        console.log( "call on close", new Date(), e );
-      } );
+      call.on( 'close', () => { console.log( "call on close", new Date() ); } );
+      call.on( 'error', ( e ) => { console.log( "call on close", new Date(), e ); } );
     } );
 
     peer.on( 'peer on disconnected', () => {
       console.log( "peer on disconnected", new Date() );
-
       peer.reconnect();
     } );
 
-    peer.on( 'peer on close', () => {
-      console.log( "peer on close", new Date() );
-    } );
-
-    peer.on( 'peer on error', ( e ) => {
-      console.log( "error", new Date(), e );
-    } );
-
-
+    peer.on( 'peer on close', () => { console.log( "peer on close", new Date() ); } );
+    peer.on( 'peer on error', ( e ) => { console.log( "error", new Date(), e ); } );
   }
 
   document.addEventListener( "click", () => {
     if ( navigator.wakeLock ) {
       try {
-        navigator.wakeLock.request( "screen" )
-          .then( () => {
-            console.log( "wakeLock: on" );
-          } );
-      } catch ( err ) {
-        console.log( 'wakeLock: ' + `${err.name}, ${err.message}` );
-      }
+        navigator.wakeLock.request( "screen" ).then( () => { console.log( "wakeLock: on" ); } );
+      } catch ( err ) { console.log( 'wakeLock: ' + `${err.name}, ${err.message}` ); }
     }
   } );
 
@@ -187,16 +153,12 @@ function init() {
     .then( ( result ) => {
       const model = result.model;
       const runtime = result.runtime;
-
       const demoLat = queryParams.get( 'lat' ) ?? 35.6740679;
       const demoLong = queryParams.get( 'long' ) ?? 139.7108025;
       const demoHeight = queryParams.get( 'height' ) ?? 60;
-
       tilesRuntime = runtime;
-
       scene.add( model );
       scene.add( runtime.getTileBoxes() );
-
       runtime.orientToGeocoord( {
         lat: Number( demoLat ),
         long: Number( demoLong ),
@@ -225,20 +187,16 @@ function initBirds() {
 
   const atlasTexture = new THREE.CanvasTexture( canvas );
   atlasTexture.needsUpdate = true;
-
   atlasTexture.flipY = false;
 
   const geometry = new THREE.InstancedBufferGeometry();
-
   const baseVertices = new Float32Array( [0, 0, 0] );
   geometry.setAttribute( 'position', new THREE.BufferAttribute( baseVertices, 3 ) );
-
   const birdIndices = new Float32Array( BIRD_COUNT );
   for ( let i = 0; i < BIRD_COUNT; i++ ) {
     birdIndices[i] = i % emojis.length;
   }
   geometry.setAttribute( 'aBirdIndex', new THREE.InstancedBufferAttribute( birdIndices, 1 ) );
-
   geometry.instanceCount = BIRD_COUNT;
 
   const material = new THREE.ShaderMaterial( {
@@ -248,7 +206,6 @@ function initBirds() {
       'textureVelocity': { value: null },
       'uWidth': { value: WIDTH },
       'uAtlasWidth': { value: ATLAS_GRID_WIDTH },
-      // 映像テクスチャを追加
       'textureVideo': { value: null }
     },
     vertexShader: emojiVS,
@@ -257,40 +214,32 @@ function initBirds() {
   } );
 
   birdUniforms = material.uniforms;
-
   const birds = new THREE.Points( geometry, material );
   birds.frustumCulled = false;
   scene.add( birds );
 
-  // 映像テクスチャの初期化
   if ( canvasElement ) {
-    // Wait for video to be ready before creating texture
     const initializeVideoTexture = () => {
-      // Check if we have valid dimensions from either canvas
       const validDimensions = ( canvasElement.videoWidth > 0 && canvasElement.videoHeight > 0 ) ||
         ( videoProcessingCanvas.width > 0 && videoProcessingCanvas.height > 0 );
 
       if ( validDimensions ) {
-        // Create texture from our processing canvas instead of the display canvas
         videoTexture = new THREE.Texture( videoProcessingCanvas );
         videoTexture.needsUpdate = false;
         videoTexture.flipY = false;
         videoTexture.wrapS = THREE.ClampToEdgeWrapping;
         videoTexture.wrapT = THREE.ClampToEdgeWrapping;
-        videoTexture.minFilter = THREE.LinearFilter;
-        videoTexture.magFilter = THREE.LinearFilter;
-        // Disable mipmap generation for video textures
+
+        // 【重要】 隣り合うCoarse/Fineピクセルが混ざらないように NearestFilter を使用
+        videoTexture.minFilter = THREE.NearestFilter;
+        videoTexture.magFilter = THREE.NearestFilter;
         videoTexture.generateMipmaps = false;
 
-        // パーティクルのuniformsに映像テクスチャを設定
         birdUniforms['textureVideo'].value = videoTexture;
       } else {
-        // Retry after a short delay
         setTimeout( initializeVideoTexture, 100 );
       }
     };
-
-    // Start the initialization process
     initializeVideoTexture();
   }
 }
@@ -298,10 +247,8 @@ function initBirds() {
 function onWindowResize() {
   windowHalfX = window.innerWidth / 2;
   windowHalfY = window.innerHeight / 2;
-
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
-
   renderer.setSize( window.innerWidth, window.innerHeight );
 }
 
@@ -311,7 +258,6 @@ function animate() {
 }
 
 function render() {
-  // 映像テクスチャの更新処理
   if ( videoTextureNeedsUpdate ) {
     videoTexture.needsUpdate = true;
     videoTextureNeedsUpdate = false;
