@@ -18,7 +18,7 @@ const queryParams = new URLSearchParams( document.location.search );
 let container, stats;
 let camera, scene, renderer, controls;
 
-const BOUNDS = 800; // Coordinate range
+const BOUNDS = 4000; // Coordinate range
 
 let birdUniforms;
 
