@@ -141,7 +141,15 @@ function init() {
           // Send messages
           conn.send( 'Hello!' );
 
-          const call = peer.call( 'functor001bboidreceiver', stream );
+          const call = peer.call( 'functor001bboidreceiver', stream, {
+            constraints: {
+              video: {
+                width: { exact: 1920 },
+                height: { exact: 1080 },
+                frameRate: { ideal: 30, max: 30 }
+              }
+            }
+          } );
 
           const videoSender = call.peerConnection.getSenders().filter( function ( s ) {
             return s.track && s.track.kind == "video";
@@ -149,14 +157,9 @@ function init() {
 
           if ( videoSender ) {
             const parameters = videoSender.getParameters();
-
-            console.log( videoSender, parameters );
-
-            if ( !parameters.encodings ) {
-              parameters.encodings = [{ maxBitrate: 0 }];
-            }
-
-            parameters.encodings[0].maxBitrate = 10000000; // 5 Mbps
+            parameters.encodings[0].maxBitrate = 50000000;
+            parameters.encodings[0].priority = "high";
+            parameters.encodings[0].networkPriority = "high";
 
             videoSender.setParameters( parameters )
               .then( () => {
@@ -165,6 +168,11 @@ function init() {
               .catch( e => {
                 console.error( "Error setting bitrate:", e );
               } );
+          }
+
+          const videoTrack = stream.getVideoTracks()[0];
+          if ( videoTrack.contentHint !== undefined ) {
+            videoTrack.contentHint = 'text';
           }
 
           call.on( "stream", ( answer ) => {
