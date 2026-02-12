@@ -7,25 +7,22 @@ import emojiFS from "./emojiFS.frag";
 import emojiVS from "./emojiVSreceiver.vert";
 
 const canvasElement = document.getElementById( 'textureCanvas' );
-// Create a separate canvas for video processing to avoid conflicts
+// Video processing canvas (size is determined dynamically when receiving video)
 const videoProcessingCanvas = document.createElement( 'canvas' );
-// 【変更点】 サイズを倍にする (128 -> 256)
-videoProcessingCanvas.width = 256;
-videoProcessingCanvas.height = 256;
 
 /* TEXTURE WIDTH FOR SIMULATION */
-const WIDTH = 128; // シミュレーション上の個数は変わらない
+const WIDTH = 128; // Number of particles (128x128)
 
 const queryParams = new URLSearchParams( document.location.search );
 
 let container, stats;
 let camera, scene, renderer, controls;
 
-const BOUNDS = 800, BOUNDS_HALF = BOUNDS / 2;
+const BOUNDS = 800; // Coordinate range
 
 let birdUniforms;
 
-// 新しいテクスチャ用の変数
+// Video texture related
 let videoTexture;
 let videoTextureNeedsUpdate = false;
 
@@ -96,12 +93,43 @@ function init() {
 
         const processVideoFrame = () => {
           if ( canvasElement.readyState === canvasElement.HAVE_ENOUGH_DATA ) {
-            const ctx = videoProcessingCanvas.getContext( '2d' );
-            if ( ctx ) {
-              // 256x256 のキャンバスに描画
-              ctx.drawImage( canvasElement, 0, 0, videoProcessingCanvas.width, videoProcessingCanvas.height );
+            const videoW = canvasElement.videoWidth;
+            const videoH = canvasElement.videoHeight;
+
+            // Video size is valid and size change has occurred
+            if ( videoW > 0 && videoH > 0 &&
+              ( videoProcessingCanvas.width !== videoW || videoProcessingCanvas.height !== videoH ) ) {
+
+              console.log( `Resize detected: ${videoProcessingCanvas.width}x${videoProcessingCanvas.height} -> ${videoW}x${videoH}` );
+
+              // 1. Update canvas size
+              videoProcessingCanvas.width = videoW;
+              videoProcessingCanvas.height = videoH;
+
+              // 2. Dispose of old texture to prevent memory leaks
               if ( videoTexture ) {
-                videoTextureNeedsUpdate = true;
+                videoTexture.dispose();
+              }
+
+              // 3. Create new texture (to support size changes)
+              videoTexture = new THREE.Texture( videoProcessingCanvas );
+              videoTexture.flipY = false;
+              videoTexture.minFilter = THREE.NearestFilter;
+              videoTexture.magFilter = THREE.NearestFilter;
+              videoTexture.generateMipmaps = false;
+
+              // 4. Set new texture to shader uniforms
+              if ( birdUniforms ) {
+                birdUniforms['textureVideo'].value = videoTexture;
+              }
+            }
+
+            const ctx = videoProcessingCanvas.getContext( '2d' );
+            if ( ctx && videoProcessingCanvas.width > 0 ) {
+              ctx.drawImage( canvasElement, 0, 0, videoProcessingCanvas.width, videoProcessingCanvas.height );
+
+              if ( videoTexture ) {
+                videoTexture.needsUpdate = true;
               }
             }
           }
@@ -194,19 +222,21 @@ function initBirds() {
   geometry.setAttribute( 'position', new THREE.BufferAttribute( baseVertices, 3 ) );
   const birdIndices = new Float32Array( BIRD_COUNT );
   for ( let i = 0; i < BIRD_COUNT; i++ ) {
-    birdIndices[i] = i % emojis.length;
+    birdIndices[i] = i;
   }
+  geometry.setAttribute( 'aBirdIndex', new THREE.InstancedBufferAttribute( birdIndices, 1 ) );
   geometry.setAttribute( 'aBirdIndex', new THREE.InstancedBufferAttribute( birdIndices, 1 ) );
   geometry.instanceCount = BIRD_COUNT;
 
   const material = new THREE.ShaderMaterial( {
     uniforms: {
       'tBirdAtlas': { value: atlasTexture },
-      'texturePosition': { value: null },
-      'textureVelocity': { value: null },
-      'uWidth': { value: WIDTH },
+      'uWidth': { value: WIDTH }, // 128
       'uAtlasWidth': { value: ATLAS_GRID_WIDTH },
-      'textureVideo': { value: null }
+      'textureVideo': { value: null },
+      // Parameters for coordinate recovery
+      'uMin': { value: -2000.0 },  // BOUNDS_HALF * -1
+      'uRange': { value: 4000.0 }  // BOUNDS
     },
     vertexShader: emojiVS,
     fragmentShader: emojiFS,
@@ -220,17 +250,22 @@ function initBirds() {
 
   if ( canvasElement ) {
     const initializeVideoTexture = () => {
+      // Check if video dimensions are determined
       const validDimensions = ( canvasElement.videoWidth > 0 && canvasElement.videoHeight > 0 ) ||
         ( videoProcessingCanvas.width > 0 && videoProcessingCanvas.height > 0 );
 
       if ( validDimensions ) {
+        // Initial size setting (if videoProcessingCanvas is 0x0)
+        if ( videoProcessingCanvas.width === 0 ) {
+          videoProcessingCanvas.width = canvasElement.videoWidth || 256;
+          videoProcessingCanvas.height = canvasElement.videoHeight || 256;
+        }
+
         videoTexture = new THREE.Texture( videoProcessingCanvas );
         videoTexture.needsUpdate = false;
-        videoTexture.flipY = false;
-        videoTexture.wrapS = THREE.ClampToEdgeWrapping;
-        videoTexture.wrapT = THREE.ClampToEdgeWrapping;
+        videoTexture.flipY = false; // Align with WebGL coordinate system
 
-        // 【重要】 隣り合うCoarse/Fineピクセルが混ざらないように NearestFilter を使用
+        // Use NearestFilter (dot grid mode) to prevent adjacent values from mixing
         videoTexture.minFilter = THREE.NearestFilter;
         videoTexture.magFilter = THREE.NearestFilter;
         videoTexture.generateMipmaps = false;
@@ -258,7 +293,7 @@ function animate() {
 }
 
 function render() {
-  if ( videoTextureNeedsUpdate ) {
+  if ( videoTextureNeedsUpdate && videoTexture ) {
     videoTexture.needsUpdate = true;
     videoTextureNeedsUpdate = false;
   }

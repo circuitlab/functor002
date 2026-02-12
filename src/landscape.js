@@ -15,8 +15,17 @@ import emojiVS from "./emojiVS.vert";
 import fragmentShaderPosition from "./FragmentShaderPosition.frag";
 import fragmentShaderVelocity from "./FragmentShaderVelocity.frag";
 
+import { ParticleEncoder } from './DataStreamer.js';
+
 /* TEXTURE WIDTH FOR SIMULATION */
 const WIDTH = 128;
+
+const readBuffer = new Float32Array( WIDTH * WIDTH * 4 );
+
+const PARTICLE_W = 128;
+const PARTICLE_H = 128;
+const encoder = new ParticleEncoder( PARTICLE_W, PARTICLE_H );
+const stream = encoder.getStream( 30 );
 
 const queryParams = new URLSearchParams( document.location.search );
 
@@ -27,7 +36,7 @@ let mouseX = 0, mouseY = 0;
 let windowHalfX = window.innerWidth / 2;
 let windowHalfY = window.innerHeight / 2;
 
-const BOUNDS = 800, BOUNDS_HALF = BOUNDS / 2;
+const BOUNDS = 4000, BOUNDS_HALF = BOUNDS / 2;
 
 let last = performance.now();
 
@@ -132,7 +141,7 @@ function init() {
           // Send messages
           conn.send( 'Hello!' );
 
-          const call = peer.call( 'functor001bboidreceiver', canvasElement.captureStream( 30 ) );
+          const call = peer.call( 'functor001bboidreceiver', stream );
 
           const videoSender = call.peerConnection.getSenders().filter( function ( s ) {
             return s.track && s.track.kind == "video";
@@ -411,6 +420,25 @@ function animate() {
   render();
   stats.update();
   controls.update();
+  updateStream();
+}
+
+function updateStream() {
+  // Get the RenderTarget containing the current position information texture
+  const currentTarget = gpuCompute.getCurrentRenderTarget( positionVariable );
+
+  // Read pixel data from GPU
+  // readRenderTargetPixels( target, x, y, width, height, buffer )
+  renderer.readRenderTargetPixels(
+    currentTarget,
+    0, 0, WIDTH, WIDTH,
+    readBuffer
+  );
+
+  // Pass to encoder
+  // readBuffer is [x, y, z, w, x, y, z, w...] so stride is 4
+  // BOUNDS is 800
+  encoder.update( readBuffer, BOUNDS, 4 );
 }
 
 function render() {

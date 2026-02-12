@@ -1,66 +1,70 @@
+// emojiVSreceiver.vert
+
 attribute float aBirdIndex;
+
 uniform sampler2D textureVideo;
-uniform float uWidth; // これは 128.0 のまま
+uniform float uWidth;
+uniform float uAtlasWidth;
+uniform float uMin;   
+uniform float uRange;
+
 varying float vBirdIndex;
+varying vec3 vDebugColor;
+
+// --- Configuration (match with Sender) ---
+const float BLOCK_SIZE = 4.0;
+const float STREAM_W = 1280.0; // Physical texture width
+const float STREAM_H = 720.0;
+
+// Wrap width to 318.0
+const float LOGICAL_W = 318.0; 
+
+vec2 getUV(float dataIndex) {
+    // Loop within 0〜317
+    float col = mod(dataIndex, LOGICAL_W);
+    float row = floor(dataIndex / LOGICAL_W);
+
+    // Pixel position calculation
+    // col * 4 + 2.0
+    float px = col * BLOCK_SIZE + (BLOCK_SIZE * 0.5);
+    float py = row * BLOCK_SIZE + (BLOCK_SIZE * 0.5);
+
+    // Normalize by physical size (1280)
+    // The rightmost 8px (318~320) are not read, so it's safe
+    return vec2(
+        px / STREAM_W,
+        1.0 - (py / STREAM_H) 
+    );
+}
 
 void main() {
-    // 128x128 のグリッドインデックス
-    float instanceIndex = float(gl_InstanceID);
-    
-    // 128x128 グリッド上での XY 座標 (0 〜 127)
-    float gridX = mod(instanceIndex, uWidth);
-    float gridY = floor(instanceIndex / uWidth);
+    float id = aBirdIndex; 
 
-    // テクスチャサイズは 256x256 (uWidth * 2)
-    // 1パーティクルにつき 2x2 ブロックが割り当てられている
-    // Coarse (粗) は 左側 (2*gridX, 2*gridY)
-    // Fine   (精) は 右側 (2*gridX + 1, 2*gridY)
-    
-    // UV座標の計算: ピクセルの中心を正確に狙うために +0.5 をしてテクスチャサイズ(256.0)で割る
-    float texSize = uWidth * 2.0;
-    
-    // 左上のピクセル (Coarse) のUV
-    vec2 uvCoarse = vec2(
-        (gridX * 2.0 + 0.5) / texSize,
-        (gridY * 2.0 + 0.5) / texSize
-    );
+    // Emoji type
+    float totalEmojis = uAtlasWidth * uAtlasWidth; 
+    if (totalEmojis < 1.0) totalEmojis = 1.0;
+    vBirdIndex = mod(id, totalEmojis);
 
-    // 右上のピクセル (Fine) のUV
-    vec2 uvFine = vec2(
-        (gridX * 2.0 + 1.5) / texSize, // +1.5 で右のピクセルへ
-        (gridY * 2.0 + 0.5) / texSize
-    );
+    // Data reading
+    float idxX = id * 3.0;
+    float idxY = id * 3.0 + 1.0;
+    float idxZ = id * 3.0 + 2.0;
 
-    // --- テクスチャからデータを取得 ---
-    vec4 colorCoarse = texture2D(textureVideo, uvCoarse);
-    vec4 colorFine   = texture2D(textureVideo, uvFine);
+    float rawX = texture2D(textureVideo, getUV(idxX)).r;
+    float rawY = texture2D(textureVideo, getUV(idxY)).r;
+    float rawZ = texture2D(textureVideo, getUV(idxZ)).r;
 
-    // --- 座標復元 ---
-    // RGB値は 0.0〜1.0 で取得される
-    // 復元式: 値 = Coarse + (Fine / 255.0)
-    // Coarseが 0.0〜1.0 なので、Fine/255.0 を足して精度を高める
-    
-    vec3 normalizedPos = vec3(
-        colorCoarse.r + (colorFine.r / 255.0),
-        colorCoarse.g + (colorFine.g / 255.0),
-        colorCoarse.b + (colorFine.b / 255.0)
-    );
+    // Debug (can be commented out if no issues)
+    vDebugColor = vec3(rawX, rawY, rawZ);
 
-    // --- 座標変換 (-400 〜 400) ---
-    // 元の正規化式: (val / 800) + 0.5 = normalized
-    // 逆変換: (normalized - 0.5) * 800 = val
-    
-    vec3 pos = vec3(
-        (normalizedPos.r - 0.5) * 800.0,
-        (normalizedPos.g - 0.5) * 800.0,
-        (normalizedPos.b - 0.5) * 800.0
-    );
+    vec3 pos;
+    pos.x = rawX * uRange + uMin;
+    pos.y = rawY * uRange + uMin;
+    pos.z = rawZ * uRange + uMin;
 
-    vBirdIndex = aBirdIndex;
     vec4 modelViewPosition = modelViewMatrix * vec4(pos, 1.0);
     gl_Position = projectionMatrix * modelViewPosition;
 
-    // カメラからの距離計算
     float distance = -modelViewPosition.z;
-    gl_PointSize = 6000.0 / distance;
+    gl_PointSize = 6000.0 / max(distance, 10.0);
 }
